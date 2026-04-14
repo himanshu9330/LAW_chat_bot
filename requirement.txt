@@ -7,4 +7,10 @@ langchain-huggingface
 langgraph
 pypdf
 python-dotenv
-streamlit
+sentence-transformers
+scikit-learn
+numpy
+pinecone
+google-search-results
+groq
+ipython
