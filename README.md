@@ -220,12 +220,22 @@ law_suggestion/
 
 ## 📝 Sample Execution
 
-**User Query**: *"What are the rights of women during police investigation?"*
+**Question**: *"What are the rights of women during police investigation?"*
 
-**Agent Output**:
+### 🛠️ Agent Execution Logs
+```text
+🔍 Refined Query: "Rights of women during police investigation under Indian Law, Section 160 and 161 of CrPC, and guidelines by High Court of India"
+⚖️ Risk Assessment: LOW
+🎯 Best cluster matched: Cluster 14. Going deeper...
+✅ High confidence (0.64). Moving to Roadmap...
+🗺️ Generating legal roadmap...
+⚖️ Finalizing expert response (Strictly Indian Law)...
 
-> ### ⚖️ Expert Legal Response
-> 
+--- AGENT EXECUTION COMPLETE ---
+```
+
+### ⚖️ Final Expert Response
+
 > **Disclaimer**: The information provided is for general guidance only and should not be considered as legal advice. It is recommended to consult a qualified lawyer for specific and personalized advice.
 > 
 > **Lawyer Requirement**: **Optional** - While a lawyer is not mandatory, it is highly recommended to have one for proper guidance and representation during the police investigation.
