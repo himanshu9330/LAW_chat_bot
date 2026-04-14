@@ -218,6 +218,40 @@ law_suggestion/
 
 ---
 
+## 📝 Sample Execution
+
+**User Query**: *"What are the rights of women during police investigation?"*
+
+**Agent Output**:
+
+> ### ⚖️ Expert Legal Response
+> 
+> **Disclaimer**: The information provided is for general guidance only and should not be considered as legal advice. It is recommended to consult a qualified lawyer for specific and personalized advice.
+> 
+> **Lawyer Requirement**: **Optional** - While a lawyer is not mandatory, it is highly recommended to have one for proper guidance and representation during the police investigation.
+> 
+> **Legal Summary**: In India, women have the right to be treated with dignity and respect during police investigations. The police are required to follow certain procedures to ensure that women are not harassed or intimidated during the investigation process.
+> 
+> **Relevant Laws**: The Indian Penal Code (IPC), 1860, and the Code of Criminal Procedure (CrPC), 1973, are relevant laws that govern the investigation process.
+> 
+> **Step-by-step Action Roadmap**:
+> 1. If a woman wants to file a complaint, she can approach the police station and provide a written complaint.
+> 2. The police are required to register a First Information Report (FIR) under Section 154 of the CrPC.
+> 3. The police will then conduct an investigation, during which they may ask questions and collect evidence.
+> 4. The woman has the right to have a lawyer present during the investigation.
+> 5. The police are required to provide a copy of the FIR to the woman and keep her informed about the progress of the investigation.
+> 
+> **Important Rights / Notes**:
+> - The right to dignity and respect during the investigation process.
+> - The right to have a lawyer present during the investigation.
+> - The right to receive a copy of the FIR.
+> - The right to be kept informed about the progress of the investigation.
+> - The police are required to provide assistance to the woman if she chooses to file a complaint under the Indian Penal Code or any other law.
+> 
+> **Final Note**: It is essential to remember that the police investigation process should be fair, impartial, and respectful. If a woman feels that her rights are being violated or that she is being harassed during the investigation, she should immediately seek help from a lawyer or a women's rights organization.
+
+---
+
 ## 🛡️ Safety & Guardrails
 
 ### Legal Disclaimer
