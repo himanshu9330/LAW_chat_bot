@@ -29,45 +29,36 @@
 
 ## 🧠 Architecture Overview
 
-### LangGraph Workflow Orchestration
+### High-Level Workflow Orchestration
 
-The pipeline is modeled as a **Directed Acyclic Graph (DAG)** using LangGraph, where each node performs a discrete task and conditional edges handle smart routing.
+The pipeline is orchestrated as a **Directed Acyclic Graph (DAG)** using LangGraph, enabling dynamic execution paths, robust fallback mechanisms, and structured generation.
 
-```
-[User Query]
-     │
-     ▼
-[Domain Classifier Node]
-     │
-     ├── Non-Law Query ──────────────────────► [Direct LLM Response]
-     │
-     └── Law Query
-          │
-          ▼
-     [Query Refinement Node]          ← Restructures raw query into formal legal query
-          │
-          ▼
-     [Risk Classifier Node]           ← Tags risk: Low / Medium / High
-          │
-          ▼
-     [RAG Retrieval Node]             ← Semantic search over Pinecone vector store
-          │
-          ├── Score ≥ Threshold ──────► [RAG Context Ready]
-          │
-          └── Score < Threshold ──────► [SerpAPI Fallback Node]  ← Live web search
-                                              │
-                                              ▼
-                                     [Context Merge Node]         ← RAG + SERP merged
-                                              │
-                                              ▼
-                                     [Legal Expert LLM Node]      ← Groq inference
-                                              │
-                                              ▼
-                                     [Structured Output]
-                                       ├── Legal Explanation
-                                       ├── Action Roadmap
-                                       ├── Lawyer Requirement
-                                       └── Disclaimer
+```mermaid
+flowchart TD
+    %% Styling
+    classDef userNode fill:#e1f5fe,stroke:#039be5,stroke-width:2px,color:#01579b
+    classDef aiNode fill:#f3e5f5,stroke:#8e24aa,stroke-width:2px,color:#4a148c
+    classDef dataNode fill:#e8f5e9,stroke:#43a047,stroke-width:2px,color:#1b5e20
+    classDef decision fill:#fff3e0,stroke:#fb8c00,stroke-width:2px,color:#e65100
+
+    U([👤 User Query]):::userNode -->|Submits Query| DC[🔍 Domain Classifier Node]:::aiNode
+    DC -->|Non-Law Query| DIR[⚡ Direct LLM Response]:::aiNode
+    DC -->|Law Query| QR[✏️ Query Refinement Node]:::aiNode
+    
+    QR -->|Contextualized Query| RC[⚠️ Risk Classifier Node]:::aiNode
+    RC -->|Assigns Risk: Low/Med/High| RAG{📚 RAG Engine<br>Score >= Threshold?}:::decision
+    
+    RAG -->|Yes: High Confidence| VD[(Pinecone Vector DB)]:::dataNode
+    VD -->|Returns Top-k Docs| CM[🧩 Context Merge Node]:::aiNode
+    
+    RAG -->|No: Low Confidence| SERP[🌐 SerpAPI Fallback]:::aiNode
+    SERP -->|Fetches Live Web Data| CM
+    
+    CM -->|Aggregated Context + Risk| LLM[🤖 Legal Expert LLM - Groq]:::aiNode
+    
+    LLM -->|Synthesizes| OUT[📋 Structured Output Generation]:::aiNode
+    DIR -->|Standard Answer| RES([💬 System Response]):::userNode
+    OUT -->|Answer, Roadmap, Lawyer Flag| RES
 ```
 
 ---
@@ -111,30 +102,38 @@ The pipeline is modeled as a **Directed Acyclic Graph (DAG)** using LangGraph, w
 
 ---
 
-## 🗄️ Data Pipeline
+## 🗄️ Data Flow Architecture (DFD)
 
-```
-Legal PDF Documents
-        │
-        ▼
-[PyPDFLoader]               ← Load raw text from legal documents
-        │
-        ▼
-[Sentence Splitter]         ← Split into sentences/passages
-        │
-        ▼
-[SentenceTransformer]       ← Generate dense embeddings (all-MiniLM-L6-v2)
-        │
-        ▼
-[KMeans Clustering]         ← Group semantically similar chunks
-        │
-        ▼
-[Pinecone Upsert]           ← Store vectors with cluster metadata
-        │
-        ▼
-[Pinecone Index]            ← Ready for semantic retrieval
-```
+### Level 0 Context & Level 1 System Flow
+The data engineering pipeline incorporates Indian legal text vectorization, dynamic context resolution, and intelligent fallback fetching.
 
+```mermaid
+flowchart TD
+    %% Styling
+    classDef userNode fill:#e1f5fe,stroke:#039be5,stroke-width:2px,color:#01579b
+    classDef processNode fill:#e0f7fa,stroke:#00acc1,stroke-width:2px,color:#006064
+    classDef dataStore fill:#e8f5e9,stroke:#43a047,stroke-width:2px,color:#1b5e20
+    classDef external fill:#fce4ec,stroke:#d81b60,stroke-width:2px,color:#880e4f
+
+    U([User]):::userNode -->|1. Raw Input| P1((Process 1:<br>Domain & Risk Analysis)):::processNode
+    P1 -->|2. Refined Query & Risk Tag| P2((Process 2:<br>Context Retrieval)):::processNode
+    
+    %% Ingestion Pipeline (side process)
+    subgraph Offline Ingestion
+        RAW[Legal PDFs] -->|PyPDF + Splitter| EMB[SentenceTransformers]
+        EMB -->|KMeans Clustering| UP[Upsert Job]
+    end
+    UP -.-|>|Vectors + Cluster IDs| DS1
+    
+    P2 <-->|3. Vector Search & Similarity Match| DS1[(Data Store 1:<br>Pinecone Legal Vectors)]:::dataStore
+    P2 <-->|4. Live HTTP Search| EX1[External API:<br>SerpAPI]:::external
+    
+    P2 -->|5. Retrieved Context Sources| P3((Process 3:<br>Context Merging)):::processNode
+    P3 -->|6. Unified Context Payload| P4((Process 4:<br>Response Generation)):::processNode
+    
+    P4 <-->|7. Prompt Synthesis| EX2[External API:<br>Groq LLM]:::external
+    P4 -->|8. Structured Markdown Guidance| U
+```
 ---
 
 ## 🔍 Retrieval Strategy
