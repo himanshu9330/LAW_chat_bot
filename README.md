@@ -123,7 +123,7 @@ flowchart TD
         RAW[Legal PDFs] -->|PyPDF + Splitter| EMB[SentenceTransformers]
         EMB -->|KMeans Clustering| UP[Upsert Job]
     end
-    UP -.-|>|Vectors + Cluster IDs| DS1
+    UP -.->|Vectors + Cluster IDs| DS1
     
     P2 <-->|3. Vector Search & Similarity Match| DS1[(Data Store 1:<br>Pinecone Legal Vectors)]:::dataStore
     P2 <-->|4. Live HTTP Search| EX1[External API:<br>SerpAPI]:::external
